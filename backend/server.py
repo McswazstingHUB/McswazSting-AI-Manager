@@ -1,21 +1,32 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
-import logging
-import sys
 import os
+import sys
+import logging
 from datetime import datetime
-from app import AIManagerCore
 
-# Configure logging
+# Set up paths BEFORE any other imports
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+logs_dir = os.path.join(project_root, 'logs')
+
+# Create logs directory if it doesn't exist
+os.makedirs(logs_dir, exist_ok=True)
+
+log_file = os.path.join(logs_dir, 'api_server.log')
+
+# Configure logging BEFORE importing Flask
 logging.basicConfig(
     level=logging.INFO,
     format='[%(asctime)s] %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('logs/api_server.log'),
+        logging.FileHandler(log_file),
         logging.StreamHandler(sys.stdout)
     ]
 )
 logger = logging.getLogger(__name__)
+
+# Now import Flask and other modules
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+from app import AIManagerCore
 
 # Initialize Flask application
 app = Flask(__name__)
@@ -81,7 +92,6 @@ def health_check():
 def get_logs():
     """Retrieve recent API logs (limited to last 50 lines)."""
     try:
-        log_file = 'logs/api_server.log'
         if not os.path.exists(log_file):
             return jsonify({"logs": []}), 200
         
@@ -106,10 +116,14 @@ def internal_error(error):
     return jsonify({"error": "Internal server error"}), 500
 
 if __name__ == "__main__":
-    # Create logs directory if it doesn't exist
-    if not os.path.exists('logs'):
-        os.makedirs('logs')
-    
-    logger.info("--- Starting McswazSting AI Manager Flask Server ---")
+    logger.info("═" * 80)
+    logger.info("McswazSting AI Manager - Flask API Server (Cyber Security Edition)")
+    logger.info("═" * 80)
+    logger.info(f"Project Root: {project_root}")
+    logger.info(f"Logs Directory: {logs_dir}")
+    logger.info(f"Log File: {log_file}")
     logger.info("CORS enabled for all origins on /api/* endpoints")
+    logger.info("Server running on http://0.0.0.0:5000")
+    logger.info("═" * 80)
+    
     app.run(host='0.0.0.0', port=5000, debug=False, threaded=True)
