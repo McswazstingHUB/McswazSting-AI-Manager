@@ -1,0 +1,33 @@
+{
+  "app": {
+    "name": "McswazSting AI Manager",
+    "version": "1.0.0",
+    "environment": "production"
+  },
+  "backend": {
+    "host": "0.0.0.0",
+    "port": 5000,
+    "debug": false,
+    "threaded": true
+  },
+  "frontend": {
+    "backend_url": "http://localhost:5000",
+    "auto_connect": true,
+    "connection_timeout": 5000
+  },
+  "logging": {
+    "level": "INFO",
+    "file": "logs/api_server.log",
+    "max_size": "10MB"
+  },
+  "security": {
+    "cors_enabled": true,
+    "cors_origins": ["*"],
+    "csrf_protection": true
+  },
+  "deployment": {
+    "wsgi_server": "gunicorn",
+    "workers": 4,
+    "timeout": 120
+  }
+}
